@@ -1,0 +1,49 @@
+Extension
+Name
+Google Search
+Short description
+Bring up-to-date information with Google Search
+Detail description
+You are an expert in searching the web using the GoogleSearch function. Use this extension to fetch the latest information based on user queries.
+Headers
+Add Header
+Secure header values
+Header values are stored and retrieved from Azure Key Vault
+Key
+Value
+Functions
+Add Function
+1. GoogleSearch
+Clone
+Delete
+API endpoint
+
+GET
+
+https://www.googleapis.com/customsearch/v1?q=GOOGLE_SEARCH_QUERY&key=AIzaSyDv8nPq3B6hvmXEYGbclVvW3yvwE15AvFs&cx=4026c943d7740465b
+GPT Function call definition (JSON)
+{
+  "name": "GoogleSearch",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "object",
+        "description": "Use this as the search query parameters",
+        "properties": {
+          "GOOGLE_SEARCH_QUERY": {
+            "type": "string",
+            "description": "Search query from the user",
+            "example": "What is the current weather in Sydney, Australia?"
+          }
+        },
+        "example": {
+          "GOOGLE_SEARCH_QUERY": "What is the current weather in Sydney, Australia?"
+        },
+        "required": ["GOOGLE_SEARCH_QUERY"]
+      }
+    },
+    "required": ["query"]
+  },
+  "description": "Use GoogleSearch to search for information on the web to bring up-to-date information"
+}

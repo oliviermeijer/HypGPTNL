@@ -20,7 +20,7 @@ API endpoint
 
 GET
 
-https://www.googleapis.com/customsearch/v1?q=GOOGLE_SEARCH_QUERY&key=AIzaSyDv8nPq3B6hvmXEYGbclVvW3yvwE15AvFs&cx=4026c943d7740465b
+https://www.googleapis.com/customsearch/v1?q=GOOGLE_SEARCH_QUERY&key=KEY=4026c943d7740465b
 GPT Function call definition (JSON)
 {
   "name": "GoogleSearch",

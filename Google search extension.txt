@@ -1,9 +1,9 @@
 Extension
-Name
+Name:
 Google Search
-Short description
+Short description:
 Bring up-to-date information with Google Search
-Detail description
+Detail description:
 You are an expert in searching the web using the GoogleSearch function. Use this extension to fetch the latest information based on user queries.
 Headers
 Add Header

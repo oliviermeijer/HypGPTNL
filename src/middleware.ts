@@ -7,9 +7,10 @@ const requireAuth: string[] = [
   "/reporting",
   "/unauthorized",
   "/persona",
-  "/prompt"
+  "/prompt",
+  "/extensions" // Toegevoegd aan de vereiste authenticatiepaden
 ];
-const requireAdmin: string[] = ["/reporting"];
+const requireAdmin: string[] = ["/reporting", "/extensions"]; // Alleen toegankelijk voor admins
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
@@ -20,14 +21,14 @@ export async function middleware(request: NextRequest) {
       req: request,
     });
 
-    //check not logged in
+    // Controleer of de gebruiker niet is ingelogd
     if (!token) {
       const url = new URL(`/`, request.url);
       return NextResponse.redirect(url);
     }
 
+    // Controleer of de gebruiker geen admin is voor admin-only paden
     if (requireAdmin.some((path) => pathname.startsWith(path))) {
-      //check if not authorized
       if (!token.isAdmin) {
         const url = new URL(`/unauthorized`, request.url);
         return NextResponse.rewrite(url);
@@ -38,11 +39,12 @@ export async function middleware(request: NextRequest) {
   return res;
 }
 
-// note that middleware is not applied to api/auth as this is required to logon (i.e. requires anon access)
+// Zorg ervoor dat de middleware wordt toegepast op de juiste routes
 export const config = {
   matcher: [
     "/unauthorized/:path*",
     "/reporting/:path*",
+    "/extensions/:path*", // Middleware toepassen op de extensiepagina
     "/api/chat:path*",
     "/api/images:path*",
     "/chat/:path*",

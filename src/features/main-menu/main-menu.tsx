@@ -43,20 +43,23 @@ export const MainMenu = async () => {
               <VenetianMask {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-          <MenuItem tooltip="extensions">
-            <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page">
-              <PocketKnife {...menuIconProps} />
-            </MenuLink>
-          </MenuItem>
-          <MenuItem tooltip="prompts">
+          {/* Toon de extensiepagina alleen voor admin gebruikers */}
+          {user.isAdmin && (
+            <MenuItem tooltip="Extensions">
+              <MenuLink href="/extensions" ariaLabel="Go to the Extensions configuration page">
+                <PocketKnife {...menuIconProps} />
+              </MenuLink>
+            </MenuItem>
+          )}
+          <MenuItem tooltip="Prompts">
             <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page">
               <Book {...menuIconProps} />
             </MenuLink>
           </MenuItem>
           {user.isAdmin && (
             <>
-              <MenuItem tooltip="reporting">
-                <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting" >
+              <MenuItem tooltip="Reporting">
+                <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting">
                   <Sheet {...menuIconProps} />
                 </MenuLink>
               </MenuItem>

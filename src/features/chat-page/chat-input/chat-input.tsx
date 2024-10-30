@@ -6,7 +6,6 @@ import {
   onKeyUp,
   useChatInputDynamicHeight,
 } from "@/features/chat-page/chat-input/use-chat-input-dynamic-height";
-
 import { AttachFile } from "@/features/ui/chat/chat-input-area/attach-file";
 import {
   ChatInputActionArea,
@@ -15,13 +14,12 @@ import {
   ChatInputSecondaryActionArea,
 } from "@/features/ui/chat/chat-input-area/chat-input-area";
 import { ChatTextInput } from "@/features/ui/chat/chat-input-area/chat-text-input";
-/*
 import { ImageInput } from "@/features/ui/chat/chat-input-area/image-input";
 import { Microphone } from "@/features/ui/chat/chat-input-area/microphone";
-*/
 import { StopChat } from "@/features/ui/chat/chat-input-area/stop-chat";
 import { SubmitChat } from "@/features/ui/chat/chat-input-area/submit-chat";
 import React, { useRef } from "react";
+import { useSession } from "next-auth/react"; // Import useSession
 import { chatStore, useChat } from "../chat-store";
 import { fileStore, useFileStore } from "./file/file-store";
 import { PromptSlider } from "./prompt/prompt-slider";
@@ -38,13 +36,13 @@ export const ChatInput = () => {
   const { loading, input, chatThreadId } = useChat();
   const { uploadButtonLabel } = useFileStore();
   const { isPlaying } = useTextToSpeech();
-  /*
-  const { isMicrophoneReady } = useSpeechToText();
-  */
+  const { isMicrophoneReady } = useSpeechToText(); // Uncommented this line
   const { rows } = useChatInputDynamicHeight();
 
   const submitButton = React.useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { data: session } = useSession(); // Get session data
 
   const submit = () => {
     if (formRef.current) {
@@ -81,24 +79,30 @@ export const ChatInput = () => {
       />
       <ChatInputActionArea>
         <ChatInputSecondaryActionArea>
-          <AttachFile
-            onClick={(formData) =>
-              fileStore.onFileChange({ formData, chatThreadId })
-            }
-          />
+          {/* Render AttachFile only if the user is an admin */}
+          {session?.user?.isAdmin && (
+            <AttachFile
+              onClick={(formData) =>
+                fileStore.onFileChange({ formData, chatThreadId })
+              }
+            />
+          )}
           <PromptSlider />
         </ChatInputSecondaryActionArea>
         <ChatInputPrimaryActionArea>
-          {/*
-          <ImageInput />
-          <Microphone
-            startRecognition={() => speechToTextStore.startRecognition()}
-            stopRecognition={() => speechToTextStore.stopRecognition()}
-            isPlaying={isPlaying}
-            stopPlaying={() => textToSpeechStore.stopPlaying()}
-            isMicrophoneReady={isMicrophoneReady}
-          />
-          */}
+          {/* Render ImageInput and Microphone only if the user is an admin */}
+          {session?.user?.isAdmin && (
+            <>
+              <ImageInput />
+              <Microphone
+                startRecognition={() => speechToTextStore.startRecognition()}
+                stopRecognition={() => speechToTextStore.stopRecognition()}
+                isPlaying={isPlaying}
+                stopPlaying={() => textToSpeechStore.stopPlaying()}
+                isMicrophoneReady={isMicrophoneReady}
+              />
+            </>
+          )}
           {loading === "loading" ? (
             <StopChat stop={() => chatStore.stopGeneratingMessages()} />
           ) : (

@@ -32,6 +32,7 @@ export const AttachFile = (props: {
       <input
         type="file"
         ref={fileInputRef}
+        accept=".pdf,.docx,.txt,.csv"
         style={{ display: "none" }}
         onChange={handleFileChange}
       />

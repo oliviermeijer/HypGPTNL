@@ -62,21 +62,25 @@ const LoadFile = async (
       : MAX_UPLOAD_DOCUMENT_SIZE;
 
     if (file && file.size < fileSize) {
-      const client = DocumentIntelligenceInstance();
+      let docs: Array<string> = [];
 
-      const blob = new Blob([file], { type: file.type });
+      if (file.type === "text/csv" || file.name.endsWith(".csv")) {
+        // Handle CSV files
+        const content = await file.text();
+        docs = [content];
+      } else {
+        const client = DocumentIntelligenceInstance();
 
-      const poller = await client.beginAnalyzeDocument(
-        "prebuilt-read",
-        await blob.arrayBuffer()
-      );
-      const { paragraphs } = await poller.pollUntilDone();
+        const blob = new Blob([file], { type: file.type });
 
-      const docs: Array<string> = [];
+        const poller = await client.beginAnalyzeDocument(
+          "prebuilt-read",
+          await blob.arrayBuffer()
+        );
+        const { paragraphs } = await poller.pollUntilDone();
 
-      if (paragraphs) {
-        for (const paragraph of paragraphs) {
-          docs.push(paragraph.content);
+        for (const paragraph of paragraphs || []) {
+          docs.push(paragraph.content || "");
         }
       }
 
@@ -84,24 +88,16 @@ const LoadFile = async (
         status: "OK",
         response: docs,
       };
-    } else {
-      return {
-        status: "ERROR",
-        errors: [
-          {
-            message: `File is too large and must be less than ${MAX_UPLOAD_DOCUMENT_SIZE} bytes.`,
-          },
-        ],
-      };
     }
+
+    return {
+      status: "ERROR",
+      errors: [{ message: "File is too large or not provided." }],
+    };
   } catch (e) {
     return {
       status: "ERROR",
-      errors: [
-        {
-          message: `${e}`,
-        },
-      ],
+      errors: [{ message: `${e}` }],
     };
   }
 };
